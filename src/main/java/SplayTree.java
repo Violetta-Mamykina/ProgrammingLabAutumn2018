@@ -15,48 +15,45 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
     }
 
     private Node<T> rotateLeft(Node<T> node) {
-        Node<T> value = node.left;
+        Node<T> value = node.right;
         node.right = value.left;
-        value.right = node;
+        value.left = node;
         return value;
     }
 
     private Node<T> splay(Node<T> node, T value) {
+        if (node == null) return null;
         int mainCompare = value.compareTo(node.value);
-
         switch (mainCompare) {
-        case -1:
-            if (node.left == null) return node;
-            int compareWithLeft = value.compareTo(node.left.value);
-            switch (compareWithLeft) {
-                case -1:
-                    node.left.left = splay(node.left.left, value);
-                    node = rotateRight(node);
-                case 1:
-                    node.left.right = splay(node.left.right, value);
-                    if (node.left.right != null) node.left = rotateLeft(node.left);
-            }
-            return node.left == null ? null : rotateRight(node);
-
+            case -1:
+                if (node.left == null) return node;
+                int compareWithLeft = value.compareTo(node.left.value);
+                switch (compareWithLeft) {
+                    case 1:
+                        node.left.right = splay(node.left.right, value);
+                        if (node.left.right != null) node.left = rotateLeft(node.left);
+                    case -1:
+                        node.left.left = splay(node.left.left, value);
+                        node = rotateRight(node);
+                }
+                return node.left == null ? node : rotateRight(node);
             case 1:
-            if (node.right == null) return node;
-            int compareWithRight = value.compareTo(node.right.value);
-            switch (compareWithRight) {
-                case 1:
-                    node.right.right = splay(node.right.right, value);
-                    node = rotateLeft(node);
-                case -1:
-                    node.left.right = splay(node.right.left, value);
-                    if (node.right.left != null) node.right = rotateRight(node.right);
-            }
-            return node.right == null ? node : rotateLeft(node);
+                if (node.right == null) return node;
+                int compareWithRight = value.compareTo(node.right.value);
+                switch (compareWithRight) {
+                    case 1:
+                        node.right.right = splay(node.right.right, value);
+                        node = rotateLeft(node);
+                    case -1:
+                        node.right.left = splay(node.right.left, value);
+                        if (node.right.left != null) node.right = rotateRight(node.right);
+                }
+                return node.right == null ? node : rotateLeft(node);
         }
         return node;
     }
 
-
     @Override
-
     public Comparator<? super T> comparator() {
         return comparator();
     }
@@ -90,8 +87,13 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         return root == null;
     }
 
+    public T get (T value) {
+        root = splay(root, value);
+        return value.compareTo(root.value) == 0 ? root.value : null;
+    }
+
     public boolean contains(Object o) {
-        return false;
+        return get((T) o) != null;
     }
 
     public Iterator<T> iterator() {
@@ -132,11 +134,24 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
                 size++;
                 return true;
         }
-        return false;
+        return false;//бросить исключение NodeImplementException
     }
 
-
     public boolean remove(Object o) {
+        if (root == null) return false;
+        root = splay(root, (T) o);
+        if (o.equals(root.value)) {
+            if (root.left == null) {
+                root = root.right;
+                size--;
+                return true;
+            }
+            Node<T> node = root.right;
+            root = root.left;
+            splay(root, (T) o);
+            root.right = node;
+            size--;
+        }
         return false;
     }
 

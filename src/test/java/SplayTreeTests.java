@@ -15,9 +15,20 @@ class SplayTreeTests {
         tree.add(18);
         tree.add(98);
         assertEquals(5, tree.size());
-        /*tree.remove(2);
+        tree.remove(2);
         tree.remove(6);
-        assertEquals(3, tree.size());*/
+        tree.remove(1);
+        assertEquals(3, tree.size());
+        tree.remove(18);
+        tree.remove(12);
+        assertEquals(1, tree.size());
+    }
+
+    @Test
+    void contains() {
+        tree.add(18);
+        assertTrue(tree.contains(18));
+        assertFalse(tree.contains(0));
     }
 
     @Test
@@ -27,6 +38,7 @@ class SplayTreeTests {
         tree.add(98);
         assertFalse(tree.isEmpty());
         tree.remove(18);
+        tree.remove(0);
         assertFalse(tree.isEmpty());
         tree.remove(98);
         assertTrue(tree.isEmpty());
