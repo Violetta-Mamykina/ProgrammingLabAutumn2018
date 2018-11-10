@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SplayTreeTests {
@@ -27,8 +29,13 @@ class SplayTreeTests {
     @Test
     void contains() {
         tree.add(18);
+        tree.add(36);
         assertTrue(tree.contains(18));
         assertFalse(tree.contains(0));
+        assertTrue(tree.contains(36));
+        tree.remove(36);
+        assertFalse(tree.contains(36));
+
     }
 
     @Test
@@ -44,7 +51,31 @@ class SplayTreeTests {
         assertTrue(tree.isEmpty());
     }
 
+    @Test
+    void clear() {
+        tree.add(8);
+        tree.add(13);
+        tree.clear();
+        assertEquals(0, tree.size());
+    }
 
+    @Test
+    void removeAll() {
+        ArrayList checkList = new ArrayList();
+        tree.add(5);
+        tree.add(6);
+        checkList.add(5);
+        checkList.add(6);
+        tree.removeAll(checkList);
+        assertEquals(0, tree.size());
 
-
+        tree.clear();
+        checkList.clear();
+        tree.add(0);
+        tree.add(3);
+        tree.add(6);
+        checkList.add(0);
+        tree.removeAll(checkList);
+        assertEquals(2, tree.size());
+    }
 }

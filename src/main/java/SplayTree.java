@@ -83,6 +83,7 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         return size;
     }
 
+    @Override
     public boolean isEmpty() {
         return root == null;
     }
@@ -92,6 +93,7 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         return value.compareTo(root.value) == 0 ? root.value : null;
     }
 
+    @Override
     public boolean contains(Object o) {
         return get((T) o) != null;
     }
@@ -134,9 +136,10 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
                 size++;
                 return true;
         }
-        return false;//бросить исключение NodeImplementException
+        return false; //бросить исключение NodeImplementException
     }
 
+    @Override
     public boolean remove(Object o) {
         if (root == null) return false;
         root = splay(root, (T) o);
@@ -167,11 +170,18 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         return false;
     }
 
+    @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        int currentSize = this.size;
+        for (Object o : c) {
+            if (contains(o)) remove(o);
+        }
+        return this.size < currentSize;
     }
 
+    @Override
     public void clear() {
-
+        root = null;
+        size = 0;
     }
 }
