@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -76,6 +77,24 @@ class SplayTreeTests {
         tree.add(6);
         checkList.add(0);
         tree.removeAll(checkList);
+        assertEquals(2, tree.size());
+        assertTrue(tree.contains(3));
+        assertTrue(tree.contains(6));
+        assertFalse(tree.contains(0));
+    }
+
+    @Test
+    void retainAll() {
+        ArrayList checkList = new ArrayList();
+        checkList.add(5);
+        checkList.add(6);
+        tree.add(5);
+        tree.add(6);
+        tree.add(8);
+        tree.retainAll(checkList);
+        assertTrue(tree.contains(5));
+        assertTrue(tree.contains(6));
+        assertFalse(tree.contains(8));
         assertEquals(2, tree.size());
     }
 }

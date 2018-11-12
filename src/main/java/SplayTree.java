@@ -1,7 +1,4 @@
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.*;
 
 public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
     private Node<T> root, left, right;
@@ -88,7 +85,7 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         return root == null;
     }
 
-    public T get (T value) {
+    public T get(T value) {
         root = splay(root, value);
         return value.compareTo(root.value) == 0 ? root.value : null;
     }
@@ -98,8 +95,47 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         return get((T) o) != null;
     }
 
+    public class SplayTreeIterator implements Iterator<T> {
+        Node<T> node = root;
+        Stack<Node<T>> stack = new Stack<Node<T>>();
+        T value;
+
+
+        public SplayTreeIterator() {
+            if (node != null) stack.push(null);
+            while (node.left != null) {
+                stack.push(node);
+                node = node.left;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+        @Override
+        public T next() {
+            if (hasNext()) value = node.value;
+            if (node.right != null) {
+                node = node.right;
+                while (node.left != null) {
+                    stack.push(node);
+                    node = node.left;
+                }
+            } else node = stack.pop();
+            return value;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Invalid operation");
+        }
+    }
+
+    @Override
     public Iterator<T> iterator() {
-        return null;
+        return new SplayTreeIterator();
     }
 
     public Object[] toArray() {
@@ -166,8 +202,14 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
         return false;
     }
 
+    @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        int currentSize = this.size;
+        ArrayList list = new ArrayList();
+        for (Object o : this) {
+            if (!c.contains(o)) this.remove(o);
+        }
+        return this.size < currentSize;
     }
 
     @Override
