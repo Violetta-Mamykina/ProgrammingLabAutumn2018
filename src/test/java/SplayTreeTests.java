@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,7 +62,7 @@ class SplayTreeTests {
 
     @Test
     void removeAll() {
-        ArrayList checkList = new ArrayList();
+        List<Integer> checkList = new ArrayList<Integer>();
         tree.add(5);
         tree.add(6);
         checkList.add(5);
@@ -85,7 +85,7 @@ class SplayTreeTests {
 
     @Test
     void retainAll() {
-        ArrayList checkList = new ArrayList();
+        List<Integer> checkList = new ArrayList<Integer>();
         checkList.add(5);
         checkList.add(6);
         tree.add(5);
@@ -96,5 +96,31 @@ class SplayTreeTests {
         assertTrue(tree.contains(6));
         assertFalse(tree.contains(8));
         assertEquals(2, tree.size());
+    }
+
+    @Test
+    void addAll() {
+        List<Integer> checkList = new ArrayList<Integer>();
+        checkList.add(14);
+        checkList.add(18);
+        checkList.add(98);
+        tree.addAll(checkList);
+        assertTrue(tree.contains(14));
+        assertTrue(tree.contains(18));
+        assertTrue(tree.contains(98));
+        assertFalse(tree.contains(22));
+        assertEquals(3, tree.size());
+    }
+
+    @Test
+    void containsAll() {
+        List<Integer> checkList = new ArrayList<Integer>();
+        checkList.add(14);
+        checkList.add(18);
+        checkList.add(98);
+        tree.add(14);
+        tree.add(18);
+        tree.add(98);
+        assertTrue(tree.containsAll(checkList));
     }
 }

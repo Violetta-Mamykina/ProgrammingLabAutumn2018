@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
+public class SplayTree<T extends Comparable<T>> implements Set<T> {
     private Node<T> root, left, right;
     private int size = 0;
 
@@ -48,31 +48,6 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
                 return node.right == null ? node : rotateLeft(node);
         }
         return node;
-    }
-
-    @Override
-    public Comparator<? super T> comparator() {
-        return comparator();
-    }
-
-    public SortedSet<T> subSet(T fromElement, T toElement) {
-        return null;
-    }
-
-    public SortedSet<T> headSet(T toElement) {
-        return null;
-    }
-
-    public SortedSet<T> tailSet(T fromElement) {
-        return null;
-    }
-
-    public T first() {
-        return null;
-    }
-
-    public T last() {
-        return null;
     }
 
     @Override
@@ -195,17 +170,20 @@ public class SplayTree<T extends Comparable<T>> implements SortedSet<T> {
     }
 
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for (Object o : c)
+            if (!contains(o)) return false;
+            return true;
     }
 
     public boolean addAll(Collection<? extends T> c) {
-        return false;
+        int currentSize = this.size;
+        for (Object o : c) add((T) o);
+        return this.size > currentSize;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
         int currentSize = this.size;
-        ArrayList list = new ArrayList();
         for (Object o : this) {
             if (!c.contains(o)) this.remove(o);
         }
