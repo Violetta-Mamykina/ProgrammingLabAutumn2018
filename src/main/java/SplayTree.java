@@ -1,7 +1,7 @@
 import java.util.*;
 
-public class SplayTree<T extends Comparable<T>> implements Set<T> {
-    private Node<T> root, left, right;
+public class SplayTree<T extends Comparable<T>> implements Set<T>, Iterable<T> {
+    private Node<T> root;
     private int size = 0;
 
     private Node<T> rotateRight(Node<T> node) {
@@ -70,55 +70,25 @@ public class SplayTree<T extends Comparable<T>> implements Set<T> {
         return get((T) o) != null;
     }
 
-    public class SplayTreeIterator implements Iterator<T> {
-        Node<T> node = root;
-        Stack<Node<T>> stack = new Stack<Node<T>>();
-        T value;
-
-
-        public SplayTreeIterator() {
-            if (node != null) stack.push(null);
-            while (node.left != null) {
-                stack.push(node);
-                node = node.left;
-            }
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !stack.isEmpty();
-        }
-
-        @Override
-        public T next() {
-            if (hasNext()) value = node.value;
-            if (node.right != null) {
-                node = node.right;
-                while (node.left != null) {
-                    stack.push(node);
-                    node = node.left;
-                }
-            } else node = stack.pop();
-            return value;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Invalid operation");
-        }
+    @Override
+    public Iterator<T> iterator() {
+        return new SplayTreeIterator<T>(this);
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return new SplayTreeIterator();
-    }
-
     public Object[] toArray() {
-        return new Object[0];
+        Object[] array = new Object[size];
+        int i = 0;
+        for (T it : this) {
+            array[i] = it;
+            i++;
+        }
+        return array;
     }
 
+    @Override
     public <T1> T1[] toArray(T1[] a) {
-        return null;
+        return (T1[]) this.toArray();
     }
 
     @Override
@@ -131,23 +101,20 @@ public class SplayTree<T extends Comparable<T>> implements Set<T> {
         root = splay(root, t);
         Node<T> node = new Node<T>(t);
         int compare = t.compareTo(root.value);
+        node.left = compare < 0 ? root.left : root;
+        node.right = compare < 0 ? root : root.right;
+        root = node;
         switch (compare) {
             case -1:
-                node.left = root.left;
-                node.right = root;
                 root.left = null;
-                root = node;
                 size++;
                 return true;
             case 1:
-                node.right = root.right;
-                node.left = root;
                 root.right = null;
-                root = node;
                 size++;
                 return true;
         }
-        return false; //бросить исключение NodeImplementException
+        throw new IllegalArgumentException();
     }
 
     @Override
@@ -169,12 +136,14 @@ public class SplayTree<T extends Comparable<T>> implements Set<T> {
         return false;
     }
 
+    @Override
     public boolean containsAll(Collection<?> c) {
         for (Object o : c)
             if (!contains(o)) return false;
-            return true;
+        return true;
     }
 
+    @Override
     public boolean addAll(Collection<? extends T> c) {
         int currentSize = this.size;
         for (Object o : c) add((T) o);
@@ -201,7 +170,20 @@ public class SplayTree<T extends Comparable<T>> implements Set<T> {
 
     @Override
     public void clear() {
-        root = null;
         size = 0;
+        clear(root);
+    }
+
+    private void clear(Node<T> node) {
+        if (node == null) return;
+        Node<T> left = node.left;
+        Node<T> right = node.right;
+        node = null;
+        if (left != null) clear(left);
+        if (right != null) clear(right);
+    }
+
+    public Node<T> getRoot() {
+        return root;
     }
 }

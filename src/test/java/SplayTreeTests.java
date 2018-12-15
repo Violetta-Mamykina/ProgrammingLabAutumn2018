@@ -1,3 +1,4 @@
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -122,5 +123,15 @@ class SplayTreeTests {
         tree.add(18);
         tree.add(98);
         assertTrue(tree.containsAll(checkList));
+    }
+
+    @Test
+    void toArray() {
+        Object[] check = {1, 2, 3};
+        tree.add(1);
+        tree.add(2);
+        tree.add(3);
+        Object[] result = tree.toArray();
+        Assert.assertArrayEquals(check, result);
     }
 }
