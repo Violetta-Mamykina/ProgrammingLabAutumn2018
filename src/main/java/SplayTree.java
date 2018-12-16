@@ -18,34 +18,30 @@ public class SplayTree<T extends Comparable<T>> implements Set<T>, Iterable<T> {
         return value;
     }
 
-    private Node<T> splay(Node<T> node, T value) {
+    private Node splay(Node node, T value) {
         if (node == null) return null;
-        int mainCompare = value.compareTo(node.value);
-        switch (mainCompare) {
-            case -1:
-                if (node.left == null) return node;
-                int compareWithLeft = value.compareTo(node.left.value);
-                switch (compareWithLeft) {
-                    case 1:
-                        node.left.right = splay(node.left.right, value);
-                        if (node.left.right != null) node.left = rotateLeft(node.left);
-                    case -1:
-                        node.left.left = splay(node.left.left, value);
-                        node = rotateRight(node);
-                }
-                return node.left == null ? node : rotateRight(node);
-            case 1:
-                if (node.right == null) return node;
-                int compareWithRight = value.compareTo(node.right.value);
-                switch (compareWithRight) {
-                    case 1:
-                        node.right.right = splay(node.right.right, value);
-                        node = rotateLeft(node);
-                    case -1:
-                        node.right.left = splay(node.right.left, value);
-                        if (node.right.left != null) node.right = rotateRight(node.right);
-                }
-                return node.right == null ? node : rotateLeft(node);
+        if (value.compareTo((T) node.value) < 0) {
+            if (node.left == null) return node;
+            if (value.compareTo((T) node.left.value) < 0) {
+                node.left.left = splay(node.left.left, value);
+                node = rotateRight(node);
+            } else if (value.compareTo((T) node.left.value) > 0) {
+                node.left.right = splay(node.left.right, value);
+                if (node.left.right != null) node.left = rotateLeft(node.left);
+            }
+            return node.left == null ? node : rotateRight(node);
+        } else if (value.compareTo((T) node.value) > 0) {
+
+            if (node.right == null) return node;
+
+            if (value.compareTo((T) node.right.value) < 0) {
+                node.right.left = splay(node.right.left, value);
+                if (node.right.left != null) node.right = rotateRight(node.right);
+            } else if (value.compareTo((T) node.right.value) > 0) {
+                node.right.right = splay(node.right.right, value);
+                node = rotateLeft(node);
+            }
+            return node.right == null ? node : rotateLeft(node);
         }
         return node;
     }
@@ -61,8 +57,11 @@ public class SplayTree<T extends Comparable<T>> implements Set<T>, Iterable<T> {
     }
 
     public T get(T value) {
-        root = splay(root, value);
-        return value.compareTo(root.value) == 0 ? root.value : null;
+        if (root == null) return null;
+        else {
+            root = splay(root, value);
+            return value.compareTo(root.value) == 0 ? root.value : null;
+        }
     }
 
     @Override
@@ -99,20 +98,19 @@ public class SplayTree<T extends Comparable<T>> implements Set<T>, Iterable<T> {
             return true;
         }
         root = splay(root, t);
-        Node<T> node = new Node<T>(t);
         int compare = t.compareTo(root.value);
+        Node<T> node = new Node<T>(t);
         node.left = compare < 0 ? root.left : root;
         node.right = compare < 0 ? root : root.right;
         root = node;
-        switch (compare) {
-            case -1:
-                root.left = null;
-                size++;
-                return true;
-            case 1:
-                root.right = null;
-                size++;
-                return true;
+        if (compare < 0) {
+            root.left = null;
+            size++;
+            return true;
+        } else if (compare > 0) {
+            root.right = null;
+            size++;
+            return true;
         }
         throw new IllegalArgumentException();
     }
@@ -126,12 +124,13 @@ public class SplayTree<T extends Comparable<T>> implements Set<T>, Iterable<T> {
                 root = root.right;
                 size--;
                 return true;
+            } else {
+                Node<T> node = root.right;
+                root = root.left;
+                splay(root, (T) o);
+                root.right = node;
+                size--;
             }
-            Node<T> node = root.right;
-            root = root.left;
-            splay(root, (T) o);
-            root.right = node;
-            size--;
         }
         return false;
     }
@@ -170,17 +169,9 @@ public class SplayTree<T extends Comparable<T>> implements Set<T>, Iterable<T> {
 
     @Override
     public void clear() {
+        for (Object it : this)
+            remove((T) it);
         size = 0;
-        clear(root);
-    }
-
-    private void clear(Node<T> node) {
-        if (node == null) return;
-        Node<T> left = node.left;
-        Node<T> right = node.right;
-        node = null;
-        if (left != null) clear(left);
-        if (right != null) clear(right);
     }
 
     public Node<T> getRoot() {
