@@ -31,9 +31,7 @@ public class SplayTree<T extends Comparable<T>> implements Set<T>, Iterable<T> {
             }
             return node.left == null ? node : rotateRight(node);
         } else if (value.compareTo((T) node.value) > 0) {
-
             if (node.right == null) return node;
-
             if (value.compareTo((T) node.right.value) < 0) {
                 node.right.left = splay(node.right.left, value);
                 if (node.right.left != null) node.right = rotateRight(node.right);
