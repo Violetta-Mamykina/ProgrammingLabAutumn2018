@@ -2,11 +2,12 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        SplayTree<Integer> splayTree = new SplayTree<Integer>();
-        splayTree.add(18);
-        splayTree.add(12);
-        splayTree.add(5);
-        splayTree.remove(5);
+        SplayTree<String> splayTree = new SplayTree<String>();
+        splayTree.add("candle");
+        splayTree.add("bring");
+        splayTree.add("arc");
+        splayTree.add("math");
+        splayTree.remove("math");
         System.out.println(Arrays.toString(splayTree.toArray()));
         SplayTreeIterator splayTreeIterator = new SplayTreeIterator(splayTree);
         while (splayTreeIterator.hasNext()) {
@@ -14,3 +15,4 @@ public class Main {
         }
     }
 }
+

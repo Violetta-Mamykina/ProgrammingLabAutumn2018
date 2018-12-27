@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SplayTreeTests {
     private SplayTree<Integer> tree = new SplayTree<Integer>();
+    private SplayTree<String> stringTree = new SplayTree<>();
 
     @Test
     void contains() {
@@ -19,6 +20,13 @@ class SplayTreeTests {
         tree.remove(36);
         assertFalse(tree.contains(36));
 
+        stringTree.add("Emma");
+        stringTree.add("Andrew");
+        assertTrue(stringTree.contains("Emma"));
+        assertFalse(stringTree.contains("Mag"));
+        stringTree.remove("Emma");
+        assertTrue(stringTree.contains("Andrew"));
+        assertFalse(stringTree.contains("Emma"));
     }
 
     @Test
@@ -32,6 +40,10 @@ class SplayTreeTests {
         assertFalse(tree.isEmpty());
         tree.remove(98);
         assertTrue(tree.isEmpty());
+
+        assertTrue(stringTree.isEmpty());
+        stringTree.add("20 лет");
+        assertFalse(stringTree.isEmpty());
     }
 
     @Test
@@ -43,6 +55,13 @@ class SplayTreeTests {
         assertFalse(tree.contains(8));
         assertFalse(tree.contains(13));
         //tree.forEach(System.out::println);
+
+        stringTree.add("aaaaaa");
+        stringTree.add("a");
+        stringTree.add("aaa");
+        stringTree.clear();
+        assertFalse(tree.contains("a"));
+        assertEquals(0, stringTree.size());
     }
 
     @Test
@@ -116,6 +135,8 @@ class SplayTreeTests {
         tree.add(2);
         tree.add(3);
         Object[] result = tree.toArray();
+        Arrays.sort(check);
+        Arrays.sort(result);
         Assert.assertArrayEquals(check, result);
     }
 
@@ -143,14 +164,14 @@ class SplayTreeTests {
 
     @Test
     void iteratorTest() {
-        Set<Integer> values = generate(10);
+        Set<Integer> values = generate(10000);
         SplayTree<Integer> splayTree = createSplayTree(values);
         splayTree.forEach(value -> assertTrue(values.contains(value)));
     }
 
     @Test
     void addTest() {
-        Set<Integer> values = generate(10);
+        Set<Integer> values = generate(100000);
         SplayTree<Integer> splayTree = createSplayTree(values);
         for (int i = 0; i < 10; i++) {
             int value = getRandomValue(values);
@@ -162,7 +183,7 @@ class SplayTreeTests {
 
     @Test
     void removeTest() {
-        Set<Integer> values = generate(10);
+        Set<Integer> values = generate(10000);
         SplayTree<Integer> splayTree = createSplayTree(values);
         values.forEach(value -> {
             splayTree.remove(value);
